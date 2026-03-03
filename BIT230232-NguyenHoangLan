@@ -1,0 +1,26 @@
+package com.mycompany.student;
+
+    @Entity
+    @Table (name="Student")
+public class Student{
+    @id     
+    private String id;
+    private String name;
+    private double gpa;
+    
+    public Student(){}
+    
+    public Student(String name,double gpa){
+    this.name = name;
+    this.gpa = gpa;
+    public String getId(){ return id;}
+    
+    public String getName(){ return name;}
+        
+    public void setName (String name) { this.name = name; }
+    
+    public double getGPa() { return gpa; }
+    public void setGpa (double gpa ) { this.gpa = gpa; }
+    }
+    toString()
+      
