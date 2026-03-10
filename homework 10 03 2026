@@ -1,0 +1,138 @@
+Ex1:
+import java.util.TreeSet;
+
+public class Main {
+    public static void main(String[] args) {
+        TreeSet<String> names = new TreeSet<>();
+        names.add("John");
+        names.add("Alice");
+        names.add("Zack");
+        names.add("Bob");
+
+        System.out.println(names);
+
+        String first = names.first();
+        String last = names.last();
+
+        System.out.println(first);
+        System.out.println(last);
+    }
+}
+ Ex2:
+public class Computer {
+    private final int hdd;
+    private final int ram;                         
+    private final boolean isBluetoothEnabled;
+    private final boolean isGraphicCardEnabled;    
+    private final String graphicCard;
+
+    private Computer(ComputerBuilder builder) {    
+        this.hdd = builder.hdd;
+        this.ram = builder.ram;
+        this.isBluetoothEnabled = builder.isBluetoothEnabled;
+        this.isGraphicCardEnabled = builder.isGraphicCardEnabled;
+        this.graphicCard = builder.graphicCard;    
+    }
+
+    public int getHdd() { return hdd; }
+    public int getRam() { return ram; }
+    public boolean isBluetoothEnabled() { return isBluetoothEnabled; }
+    public boolean isGraphicCardEnabled() { return isGraphicCardEnabled; }
+    public String getGraphicCard() { return graphicCard; }
+
+    @Override
+    public String toString() {
+        return """
+            Computer{
+            HDD = %d GB
+            RAM = %d GB
+            Bluetooth = %s
+            Graphic Card = %s
+            }""".formatted(
+            hdd,
+            ram,
+            isBluetoothEnabled ? "Enabled" : "Disabled",
+            isGraphicCardEnabled ? "Enabled" : "Disabled"
+        );
+    }
+
+    public static class ComputerBuilder {
+        private final int hdd;
+        private final int ram;
+        private boolean isBluetoothEnabled  = false;
+        private boolean isGraphicCardEnabled = false;  
+        private String graphicCard           = null;   
+
+        public ComputerBuilder(int hdd, int ram) {
+            this.hdd = hdd;
+            this.ram = ram;
+        }
+
+        public ComputerBuilder bluetooth(boolean value) {
+            this.isBluetoothEnabled = value;
+            return this;
+        }
+
+        public ComputerBuilder graphicCard(String cardName) {  
+            this.isGraphicCardEnabled = true;
+            this.graphicCard = cardName;
+            return this;
+        }
+
+        public Computer build() {
+            return new Computer(this);
+        }
+    }
+
+    public static void main(String[] args) {
+        Computer crazyPC = new ComputerBuilder(1000, 32)  
+                .bluetooth(true)
+                .graphicCard("NVIDIA RTX 6767")
+                .build();
+
+        Computer oldPC = new ComputerBuilder(500, 8)     
+                .bluetooth(false)
+                .build();
+
+        System.out.println(crazyPC); 
+        System.out.println(oldPC);    
+    }
+}
+        
+Ex4:
+import { useState } from "react";
+
+export default function TempConverter() {
+  const [celsius, setCelsius] = useState("");
+  const [fahrenheit, setFahrenheit] = useState(null);
+
+  const convert = () => {
+    const f = parseFloat(celsius) * 9 / 5 + 32;
+    setFahrenheit(f);
+  };
+
+  return (
+    <div style={{ padding: 20, fontFamily: "Arial" }}>
+      <h2>Chuyển đổi nhiệt độ °C → °F</h2>
+
+      <input
+        type="number"
+        value={celsius}
+        onChange={(e) => setCelsius(e.target.value)}
+        placeholder="Nhập nhiệt độ (°C)"
+        style={{ padding: 8, fontSize: 16, marginRight: 10 }}
+      />
+
+      <button onClick={convert} style={{ padding: "8px 16px", fontSize: 16 }}>
+        Chuyển đổi
+      </button>
+
+      {fahrenheit !== null && (
+        <p style={{ marginTop: 16, fontSize: 18 }}>
+          Kết quả: <strong>{fahrenheit.toFixed(2)} °F</strong>
+        </p>
+      )}
+    </div>
+  );
+}
+ 
