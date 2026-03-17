@@ -1,0 +1,357 @@
+Ex 1:
+import java.util.ArrayList;
+import java.util.ArrayList;
+import java.util.ArrayList;
+
+public class StudentFrame extends JFrame {
+    private JTextField txtMSSV, txtTen, txtGPA;
+    private JButton btnThem, btnXem, btnTimKiem, btnXoa;
+    private JTable table;
+    private DefaultTableModel model;
+    private ArrayList<Student> students = new ArrayList<>();
+
+    public StudentFrame() {
+        setTitle("Quản Lý Sinh Viên");
+        setSize(700, 500);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        JPanel pnInput = new JPanel();
+        pnInput.add(new JLabel("MSSV:"));
+        txtMSSV = new JTextField(10);
+        pnInput.add(txtMSSV);
+        
+        pnInput.add(new JLabel("Tên:"));
+        txtTen = new JTextField(15);
+        pnInput.add(txtTen);
+        
+        pnInput.add(new JLabel("GPA:"));
+        txtGPA = new JTextField(8);
+        pnInput.add(txtGPA);
+        
+        btnThem = new JButton("Thêm");
+        btnThem.addActionListener(e -> themSV());
+        pnInput.add(btnThem);
+        
+        btnXem = new JButton("Xem");
+        btnXem.addActionListener(e -> xemDS());
+        pnInput.add(btnXem);
+        
+        btnTimKiem = new JButton("Tìm");
+        btnTimKiem.addActionListener(e -> timKiem());
+        pnInput.add(btnTimKiem);
+        
+        btnXoa = new JButton("Xóa");
+        btnXoa.addActionListener(e -> xoaSV());
+        pnInput.add(btnXoa);
+        
+        model = new DefaultTableModel(new String[]{"MSSV", "Tên", "GPA"}, 0);
+        table = new JTable(model);
+        JScrollPane scroll = new JScrollPane(table);
+        
+        add(pnInput, "North");
+        add(scroll, "Center");
+        
+        loadData();
+    }
+
+    private void themSV() {
+        try {
+            String mssv = txtMSSV.getText().trim();
+            String ten = txtTen.getText().trim();
+            double gpa = Double.parseDouble(txtGPA.getText().trim());
+            
+            if (mssv.isEmpty() || ten.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Điền đầy đủ thông tin");
+                return;
+            }
+            
+            for (Student s : students) {
+                if (s.mssv.equals(mssv)) {
+                    JOptionPane.showMessageDialog(this, "MSSV đã tồn tại");
+                    return;
+                }
+            }
+            
+            students.add(new Student(mssv, ten, gpa));
+            JOptionPane.showMessageDialog(this, "Thêm thành công");
+            txtMSSV.setText("");
+            txtTen.setText("");
+            txtGPA.setText("");
+            xemDS();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi: " + e.getMessage());
+        }
+    }
+
+    private void xemDS() {
+        model.setRowCount(0);
+        for (Student s : students) {
+            model.addRow(new Object[]{s.mssv, s.ten, s.gpa});
+        }
+    }
+
+    private void timKiem() {
+        String ten = JOptionPane.showInputDialog(this, "Nhập tên:");
+        if (ten == null) return;
+        
+        model.setRowCount(0);
+        for (Student s : students) {
+            if (s.ten.toLowerCase().contains(ten.toLowerCase())) {
+                model.addRow(new Object[]{s.mssv, s.ten, s.gpa});
+            }
+        }
+    }
+
+    private void xoaSV() {
+        String mssv = JOptionPane.showInputDialog(this, "Nhập MSSV cần xóa:");
+        if (mssv == null) return;
+        
+        for (int i = 0; i < students.size(); i++) {
+            if (students.get(i).mssv.equals(mssv)) {
+                students.remove(i);
+                JOptionPane.showMessageDialog(this, "Xóa thành công");
+                xemDS();
+                return;
+            }
+        }
+        JOptionPane.showMessageDialog(this, "Không tìm thấy");
+    }
+
+    private void loadData() {
+        students.add(new Student("SV001", "Nguyễn lanjee ", 3.8));
+        students.add(new Student("SV002", "Nguyễn Skibidi", 3.5));
+        xemDS();
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new StudentFrame().setVisible(true));
+    }
+}
+
+class Student {
+    String mssv, ten;
+    double gpa;
+    
+    Student(String mssv, String ten, double gpa) {
+        this.mssv = mssv;
+        this.ten = ten;
+        this.gpa = gpa;
+    }
+}
+
+Ex 2:
+import javax.swing.*;
+
+public class PaymentFrame extends JFrame {
+    private JComboBox<String> cboMethod;
+    private JTextField txtAmount;
+    private JTextArea txtOutput;
+
+    public PaymentFrame() {
+        setTitle("Hệ Thống Thanh Toán");
+        setSize(600, 400);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        JPanel pnTop = new JPanel();
+        pnTop.add(new JLabel("Chọn phương thức:"));
+        cboMethod = new JComboBox<>(new String[]{"Credit Card", "PayPal", "Cash"});
+        pnTop.add(cboMethod);
+        
+        pnTop.add(new JLabel("Số tiền:"));
+        txtAmount = new JTextField(10);
+        txtAmount.setText("1000000");
+        pnTop.add(txtAmount);
+        
+        JButton btnPay = new JButton("Thanh Toán");
+        btnPay.addActionListener(e -> thanhToan());
+        pnTop.add(btnPay);
+        
+        txtOutput = new JTextArea(15, 50);
+        txtOutput.setEditable(false);
+        JScrollPane scroll = new JScrollPane(txtOutput);
+        
+        add(pnTop, "North");
+        add(scroll, "Center");
+    }
+
+    private void thanhToan() {
+        try {
+            String method = (String) cboMethod.getSelectedItem();
+            double amount = Double.parseDouble(txtAmount.getText().trim());
+            
+            if (amount <= 0) {
+                JOptionPane.showMessageDialog(this, "Số tiền phải lớn hơn 0");
+                return;
+            }
+            
+            String output = "";
+            if ("Credit Card".equals(method)) {
+                output = "THANH TOÁN BẰNG THẺ TÍN DỤNG\n" +
+                        "Số thẻ: ****3456\n" +
+                        "Chủ thẻ: Nguyễn Văn A\n" +
+                        "Số tiền: " + String.format("%.2f", amount) + " VND\n" +
+                        "✅ Thanh toán thành công";
+            } else if ("PayPal".equals(method)) {
+                output = "THANH TOÁN QURA PAYPAL\n" +
+                        "Email: user@example.com\n" +
+                        "Số tiền: " + String.format("%.2f", amount) + " VND\n" +
+                        "✅ Thanh toán thành công";
+            } else {
+                output = "THANH TOÁN BẰNG TIỀN MẶT\n" +
+                        "Địa điểm: Cửa hàng chính\n" +
+                        "Số tiền: " + String.format("%.2f", amount) + " VND\n" +
+                        "✅ Thanh toán thành công";
+            }
+            
+            txtOutput.setText(output);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi: " + e.getMessage());
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new PaymentFrame().setVisible(true));
+    }
+}
+
+
+
+Ex 3:
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.util.ArrayList;
+
+public class BankingFrame extends JFrame {
+    private JComboBox<String> cboFrom, cboTo;
+    private JTextField txtAmount;
+    private JPasswordField txtPIN;
+    private JTextArea txtLog;
+    private DefaultTableModel model;
+    private ArrayList<Account> accounts = new ArrayList<>();
+
+    public BankingFrame() {
+        setTitle("Hệ Thống Ngân Hàng");
+        setSize(700, 600);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        JPanel pnLeft = new JPanel();
+        pnLeft.setLayout(new BoxLayout(pnLeft, BoxLayout.Y_AXIS));
+        
+        pnLeft.add(new JLabel("TK gửi:"));
+        cboFrom = new JComboBox<>();
+        pnLeft.add(cboFrom);
+        
+        pnLeft.add(new JLabel("TK nhận:"));
+        cboTo = new JComboBox<>();
+        pnLeft.add(cboTo);
+        
+        pnLeft.add(new JLabel("Số tiền:"));
+        txtAmount = new JTextField("1000000", 15);
+        pnLeft.add(txtAmount);
+        
+        pnLeft.add(new JLabel("PIN:"));
+        txtPIN = new JPasswordField("1234", 15);
+        pnLeft.add(txtPIN);
+        
+        JButton btnTransfer = new JButton("Chuyển Tiền");
+        btnTransfer.addActionListener(e -> chuyenTien());
+        pnLeft.add(btnTransfer);
+        
+        JPanel pnRight = new JPanel();
+        pnRight.setLayout(new BoxLayout(pnRight, BoxLayout.Y_AXIS));
+        
+        model = new DefaultTableModel(new String[]{"Mã TK", "Chủ TK", "Số Dư"}, 0);
+        JTable table = new JTable(model);
+        JScrollPane scroll1 = new JScrollPane(table);
+        pnRight.add(new JLabel("Tài Khoản:"));
+        pnRight.add(scroll1);
+        
+        txtLog = new JTextArea(10, 40);
+        txtLog.setEditable(false);
+        JScrollPane scroll2 = new JScrollPane(txtLog);
+        pnRight.add(new JLabel("Nhật Ký:"));
+        pnRight.add(scroll2);
+        
+        add(pnLeft, "West");
+        add(pnRight, "Center");
+        
+        loadAccounts();
+    }
+
+    private void loadAccounts() {
+        accounts.clear();
+        accounts.add(new Account("ACC001", "Nguyễn Văn A", 5000000));
+        accounts.add(new Account("ACC002", "Trần Thị B", 2000000));
+        accounts.add(new Account("ACC003", "Lê Văn C", 1000000));
+        
+        cboFrom.removeAllItems();
+        cboTo.removeAllItems();
+        
+        model.setRowCount(0);
+        
+        for (Account acc : accounts) {
+            cboFrom.addItem(acc.id + " - " + acc.holder);
+            cboTo.addItem(acc.id + " - " + acc.holder);
+            model.addRow(new Object[]{acc.id, acc.holder, acc.balance});
+        }
+    }
+
+    private void chuyenTien() {
+        try {
+            int fromIdx = cboFrom.getSelectedIndex();
+            int toIdx = cboTo.getSelectedIndex();
+            
+            if (fromIdx == toIdx) {
+                JOptionPane.showMessageDialog(this, "Không thể chuyển cho chính mình");
+                return;
+            }
+            
+            String pin = new String(txtPIN.getPassword());
+            double amount = Double.parseDouble(txtAmount.getText().trim());
+            
+            if (!pin.equals("1234")) {
+                txtLog.setText("❌ PIN sai");
+                return;
+            }
+            
+            Account from = accounts.get(fromIdx);
+            Account to = accounts.get(toIdx);
+            
+            if (from.balance < amount) {
+                txtLog.setText("❌ Số dư không đủ");
+                return;
+            }
+            
+            from.balance -= amount;
+            to.balance += amount;
+            
+            String log = "🔐 Xác thực: OK\n" +
+                        "💰 Kiểm tra số dư: OK\n" +
+                        "🔄 Chuyển " + String.format("%.0f", amount) + " từ " + from.id + " sang " + to.id + "\n" +
+                        "✅ Giao dịch thành công";
+            txtLog.setText(log);
+            
+            loadAccounts();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi: " + e.getMessage());
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new BankingFrame().setVisible(true));
+    }
+}
+
+class Account {
+    String id, holder;
+    double balance;
+    
+    Account(String id, String holder, double balance) {
+        this.id = id;
+        this.holder = holder;
+        this.balance = balance;
+    }
+}
