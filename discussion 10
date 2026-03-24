@@ -1,1 +1,48 @@
+Ex1:
+import java.util.HashMap;
+import java.util.Map;
 
+public class Main {
+    public static void main(String[] args) {
+        Map<Integer, String> employeeMap = new HashMap<>();
+        employeeMap.put(101, "Anna");
+        employeeMap.put(102, "Peter");
+        employeeMap.put(103, "Mary");
+        String name102 = employeeMap.get(102);
+        System.out.println(name102);
+        employeeMap.putIfAbsent(105, "Unknown");
+        System.out.println(employeeMap.get(105));
+        System.out.println(employeeMap);
+    }
+}
+
+
+
+Ex2:
+interface MediaPlayer {
+void play(String audioType, String filename);
+}
+class VlcPlayer{
+public void playVlc(String fileName
+
+
+
+Ex3:
+class WorkerThread extends Thread {
+    public void run(){
+        System.out.println("thread đang chạy");
+    }
+}
+class WorkerRunnable implements Runnable{
+    public void run(){
+        System.out.println("runnable đang chạy");
+    }
+}
+public class Main{
+    public static void main(String[] args){
+        WorkerThread t1 = new WorkerThread();
+        t1.start();
+        Thread t2 = new Thread(new WorkerRunnable());
+        t2.start();
+    }
+}
