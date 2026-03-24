@@ -20,10 +20,51 @@ public class Main {
 
 Ex2:
 interface MediaPlayer {
-void play(String audioType, String filename);
+    void play(String audioType, String fileName);
 }
-class VlcPlayer{
-public void playVlc(String fileName
+class VlcPlayer {
+    public void playVlc(String fileName) {
+        System.out.println(fileName);
+    }
+}
+class MediaAdapter implements MediaPlayer {
+    private VlcPlayer vlcPlayer;
+    public MediaAdapter() {
+        this.vlcPlayer = new VlcPlayer();
+    }
+
+    @Override
+    public void play(String audioType, String fileName) {
+        if (audioType.equalsIgnoreCase("vlc")) {
+            vlcPlayer.playVlc(fileName);
+        }
+    }
+}
+class AudioPlayer implements MediaPlayer {
+    MediaAdapter mediaAdapter;
+    @Override
+    public void play(String audioType, String fileName) {
+        if (audioType.equalsIgnoreCase("mp3")) {
+            System.out.println(fileName);
+        } 
+        else if (audioType.equalsIgnoreCase("vlc")) {
+            mediaAdapter = new MediaAdapter();
+            mediaAdapter.play(audioType, fileName);
+        } 
+        else {
+            System.out.println("không được hỗ trợ.");
+        }
+    }
+}
+public class AdapterPatternDemo {
+    public static void main(String[] args) {
+        AudioPlayer myPlayer = new AudioPlayer();
+
+        myPlayer.play("mp3", "song_hay.mp3");
+        myPlayer.play("vlc", "movie_dinh.vlc");
+        myPlayer.play("mp4", "video_clip.mp4"); 
+    }
+}
 
 
 
@@ -44,5 +85,87 @@ public class Main{
         t1.start();
         Thread t2 = new Thread(new WorkerRunnable());
         t2.start();
+    }
+}
+
+
+
+Ex4:
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class Calculator extends JFrame implements ActionListener {
+    private JTextField display = new JTextField("0");
+    private String operator = "";
+    private double firstNum = 0;
+    private boolean startNewNumber = true;
+
+    public Calculator() {
+        setTitle("Calculator");
+        setSize(300, 400);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
+
+        display.setFont(new Font("Arial", Font.BOLD, 24));
+        display.setHorizontalAlignment(JTextField.RIGHT);
+        display.setEditable(false);
+        add(display, BorderLayout.NORTH);
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(4, 4, 5, 5));
+
+        String[] buttons = {
+            "7", "8", "9", "/",
+            "4", "5", "6", "*",
+            "1", "2", "3", "-",
+            "0", "C", "=", "+"
+        };
+
+        for (String b : buttons) {
+            JButton btn = new JButton(b);
+            btn.addActionListener(this);
+            btn.setFont(new Font("Arial", Font.PLAIN, 18));
+            panel.add(btn);
+        }
+
+        add(panel, BorderLayout.CENTER);
+        setVisible(true);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        String cmd = e.getActionCommand();
+
+        if (cmd.matches("[0-9]")) {
+            if (startNewNumber) display.setText(cmd);
+            else display.setText(display.getText() + cmd);
+            startNewNumber = false;
+        } else if (cmd.equals("C")) {
+            display.setText("0");
+            firstNum = 0;
+            startNewNumber = true;
+        } else if (cmd.equals("=")) {
+            calculate(Double.parseDouble(display.getText()));
+            operator = "";
+            startNewNumber = true;
+        } else {
+            firstNum = Double.parseDouble(display.getText());
+            operator = cmd;
+            startNewNumber = true;
+        }
+    }
+
+    private void calculate(double secondNum) {
+        switch (operator) {
+            case "+" -> display.setText(String.valueOf(firstNum + secondNum));
+            case "-" -> display.setText(String.valueOf(firstNum - secondNum));
+            case "*" -> display.setText(String.valueOf(firstNum * secondNum));
+            case "/" -> display.setText(secondNum != 0 ? String.valueOf(firstNum / secondNum) : "Error");
+        }
+    }
+
+    public static void main(String[] args) {
+        new Calculator();
     }
 }
