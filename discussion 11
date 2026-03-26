@@ -1,1 +1,139 @@
+Ex1:
+public class Bai1_GenericMethod {
+    public static <E> void printArray(E[] array) {
+        System.out.println("Danh sách phần tử:");
+        for (E element : array) {
+            System.out.print(element + " ");
+        }
+        System.out.println("\n");
+    }
+    
+    public static void main(String[] args) {
+        System.out.println("===== GENERIC METHOD - IN MẢNG =====\n");
 
+        System.out.println("Test 1: In mảng Integer[]");
+        Integer[] intArray = {10, 20, 30, 40, 50};
+        printArray(intArray);
+
+        System.out.println("Test 2: In mảng String[]");
+        String[] stringArray = {"Java", "Python", "C++", "JavaScript"};
+        printArray(stringArray);
+    }
+}
+
+
+
+Ex2:
+interface MessageService {
+    void sendMessage(String message);
+}
+
+class EmailService implements MessageService {
+    @Override
+    public void sendMessage(String message) {
+        System.out.println("[EMAIL] Gửi email: " + message);
+    }
+}
+
+class SMSService implements MessageService {
+    @Override
+    public void sendMessage(String message) {
+        System.out.println("[SMS] Gửi tin nhắn: " + message);
+    }
+}
+
+class Notification {
+    private MessageService messageService;
+
+    public void setMessageService(MessageService messageService) {
+        this.messageService = messageService;
+    }
+
+    public void notify(String message) {
+        if (messageService == null) {
+            System.out.println("Lỗi: MessageService chưa được set!");
+            return;
+        }
+        messageService.sendMessage(message);
+    }
+}
+
+public class NotificationSystem {
+    public static void main(String[] args) {
+        Notification notification = new Notification();
+
+        System.out.println("Gửi qua Email");
+        notification.setMessageService(new EmailService());
+        notification.notify("đây là thông báo qua email!");
+
+        System.out.println(" Gửi qua SMS ");
+        notification.setMessageService(new SMSService());
+        notification.notify("đây là thông báo qua SMS!");
+
+        System.out.println("Gửi qua Email lần 2 ");
+        notification.setMessageService(new EmailService());
+        notification.notify("Thông báo email lần thứ 2");
+    }
+}
+
+
+
+Ex3:
+import java.util.ArrayList;
+import java.util.List;
+ 
+class Employee {
+    private int id;
+    private String name;
+    private double salary;
+ 
+    public Employee(int id, String name, double salary) {
+        this.id = id;
+        this.name = name;
+        this.salary = salary;
+    }
+ 
+    public int getId() {
+        return id;
+    }
+ 
+    public String getName() {
+        return name;
+    }
+ 
+    public double getSalary() {
+        return salary;
+    }
+ 
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", salary=" + salary +
+                '}';
+    }
+}
+ 
+public class EmployeeStreamExample {
+    public static void main(String[] args) {
+        List<Employee> employees = new ArrayList<>();
+        employees.add(new Employee(1, "Linh", 800));
+        employees.add(new Employee(2, "Minh", 1500));
+        employees.add(new Employee(3, "An", 2000));
+        employees.add(new Employee(4, "Duc", 950));
+ 
+        System.out.println("Danh sách nhân viên:");
+        employees.forEach(System.out::println);
+        System.out.println();
+ 
+        List<String> result = employees.stream()
+                .filter(e -> e.getSalary() > 1000)
+                .map(Employee::getName)
+                .sorted()
+                .toList();
+ 
+        System.out.println("Tên nhân viên có lương > 1000 sắp xếp theo thứ tự:");
+        result.forEach(System.out::println);
+    }
+}
